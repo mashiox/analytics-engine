@@ -1,0 +1,48 @@
+#
+# Minimal Analytics Engine
+# Author: Matthew Walther <code@mashio.net>
+#
+version: "3.7"
+services:
+  sql:
+    container_name: sql
+    image: postgres:13
+    volumes:
+      - ./sql/initdb.d/:/docker-entrypoint-initdb.d/
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  metabase:
+    container_name: metabase
+    image: metabase/metabase:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - MB_JETTY_PORT=3000
+      - MB_DB_TYPE=postgres
+      - MB_DB_HOST=sql
+      - MB_DB_DBNAME=metabase
+      - MB_DB_USER=postgres
+      - MB_DB_PASS=postgres
+      - MB_DB_PORT=5432
+      - MB_EMOJI_IN_LOGS=false
+    depends_on:
+      - sql
+
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:latest
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - ./n8n:/home/node/.n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=sql
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=postgres
+    depends_on:
+      - sql

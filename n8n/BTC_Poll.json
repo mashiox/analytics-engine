@@ -1,0 +1,134 @@
+{
+  "name": "BTC_Poll",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.coincap.io/v2/assets/bitcoin",
+        "allowUnauthorizedCerts": true,
+        "options": {}
+      },
+      "name": "$BTC",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        550,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "symbol",
+              "value": "={{$node[\"$BTC\"].json[\"data\"][\"symbol\"]}}"
+            },
+            {
+              "name": "price",
+              "value": "={{$node[\"$BTC\"].json[\"data\"][\"priceUsd\"]}}"
+            },
+            {
+              "name": "meta",
+              "value": "={{$json[\"data\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "ResBTC",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "table": "=equities",
+        "columns": "symbol,price,meta",
+        "additionalFields": {}
+      },
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": null,
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "*/5 * * * *"
+            }
+          ]
+        }
+      },
+      "name": "Every 5 minutes",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        400,
+        300
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "$BTC": {
+      "main": [
+        [
+          {
+            "node": "ResBTC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ResBTC": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 5 minutes": {
+      "main": [
+        [
+          {
+            "node": "$BTC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": 1
+}
