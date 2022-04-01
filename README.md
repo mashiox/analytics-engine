@@ -30,3 +30,7 @@ Submit questions and issues to the repository's [GitHub Issues](https://github.c
 - <a href="mailto:code@mashio.net?subject=Fresh Data - ref: MBW Analytics Engine">Data</a>
 - <a href="mailto:code@mashio.net?subject=Introduction - ref: MBW Analytics Engine">Expertise</a>
 - [Donations](https://account.venmo.com/u/Matt-Walther-4)
+
+## Similar Projects
+
+- [OpenBB](https://github.com/OpenBB-finance/OpenBBTerminal)
