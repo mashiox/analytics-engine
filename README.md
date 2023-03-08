@@ -34,3 +34,4 @@ Submit questions and issues to the repository's [GitHub Issues](https://github.c
 ## Similar Projects
 
 - [OpenBB](https://github.com/OpenBB-finance/OpenBBTerminal)
+- https://maxhalford.github.io/blog/ogd-in-sql/
