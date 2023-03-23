@@ -35,3 +35,4 @@ Submit questions and issues to the repository's [GitHub Issues](https://github.c
 
 - [OpenBB](https://github.com/OpenBB-finance/OpenBBTerminal)
 - https://maxhalford.github.io/blog/ogd-in-sql/
+- https://github.com/saeed349/Microservices-Based-Algorithmic-Trading-System
