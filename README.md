@@ -1,4 +1,4 @@
-# MBW Analytics Engine
+# Analytics Engine
 
 An environment of open source application designed to collect, sample, and analyze market data.
 
