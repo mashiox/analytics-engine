@@ -6,13 +6,18 @@ version: "3.7"
 services:
   sql:
     container_name: sql
-    image: postgres:13
+    image: postgres:18
     volumes:
       - ./sql/initdb.d/:/docker-entrypoint-initdb.d/
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: [ "CMD", "/usr/bin/pg_isready", "--host=127.0.0.1", "--username=postgres" ]
+      interval: 8s
+      timeout: 4s
+      retries: 4
 
   metabase:
     container_name: metabase
@@ -29,11 +34,12 @@ services:
       - MB_DB_PORT=5432
       - MB_EMOJI_IN_LOGS=false
     depends_on:
-      - sql
+      sql:
+        condition: service_healthy
 
   n8n:
     container_name: n8n
-    image: n8nio/n8n:latest
+    image: n8nio/n8n:2.42.7
     ports:
       - "127.0.0.1:5678:5678"
     volumes:
@@ -45,4 +51,5 @@ services:
       - DB_POSTGRESDB_USER=postgres
       - DB_POSTGRESDB_PASSWORD=postgres
     depends_on:
-      - sql
+      sql:
+        condition: service_healthy

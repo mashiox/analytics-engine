@@ -1,0 +1,171 @@
+[
+  {
+    "updatedAt": "2026-10-13T04:52:31.211Z",
+    "createdAt": "2026-10-13T04:52:29.021Z",
+    "id": "aHKPxbsQMjzFkBjQ",
+    "name": "BTC_Poll",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "url": "https://api.coinbase.com/v2/prices/BTC-USD/spot",
+          "allowUnauthorizedCerts": true,
+          "options": {}
+        },
+        "name": "$BTC",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 1,
+        "position": [
+          304,
+          0
+        ],
+        "id": "45e1c934-1f5e-47f6-bf87-dca2503a317b"
+      },
+      {
+        "parameters": {
+          "values": {
+            "string": [
+              {
+                "name": "symbol",
+                "value": "={{$node[\"$BTC\"].json[\"data\"][\"base\"]}}"
+              },
+              {
+                "name": "price",
+                "value": "={{$node[\"$BTC\"].json[\"data\"][\"amount\"]}}"
+              },
+              {
+                "name": "meta",
+                "value": "={{$json[\"data\"]}}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "name": "ResBTC",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [
+          496,
+          0
+        ],
+        "id": "632126ff-4629-4eb4-a75c-8c5b44ef010f"
+      },
+      {
+        "parameters": {
+          "table": "=equities",
+          "columns": "symbol,price,meta",
+          "additionalFields": {}
+        },
+        "name": "Postgres",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 1,
+        "position": [
+          656,
+          0
+        ],
+        "id": "ea7182ab-1d88-449c-be04-2ef035aa8b86",
+        "credentials": {
+          "postgres": {
+            "id": "hMJuhTgdvXsiBcd9",
+            "name": "Postgres account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "triggerTimes": {
+            "item": [
+              {
+                "mode": "custom",
+                "cronExpression": "*/5 * * * *"
+              }
+            ]
+          }
+        },
+        "name": "Every 5 minutes",
+        "type": "n8n-nodes-base.cron",
+        "position": [
+          160,
+          0
+        ],
+        "typeVersion": 1,
+        "id": "7d753ef4-7f7b-49df-be6e-ca3feed61be5"
+      }
+    ],
+    "connections": {
+      "$BTC": {
+        "main": [
+          [
+            {
+              "node": "ResBTC",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ResBTC": {
+        "main": [
+          [
+            {
+              "node": "Postgres",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Every 5 minutes": {
+        "main": [
+          [
+            {
+              "node": "$BTC",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate"
+    },
+    "staticData": null,
+    "meta": null,
+    "nodeGroups": [],
+    "pinData": {},
+    "versionId": "51b9b583-fbaa-4634-b7c0-5881e27890a4",
+    "activeVersionId": "51b9b583-fbaa-4634-b7c0-5881e27890a4",
+    "versionCounter": 2,
+    "triggerCount": 1,
+    "sourceWorkflowId": null,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2026-10-13T05:10:50.742Z",
+        "createdAt": "2026-10-13T05:10:50.742Z",
+        "role": "workflow:owner",
+        "workflowId": "aHKPxbsQMjzFkBjQ",
+        "projectId": "Gci7sqlKmo37FwO9",
+        "project": {
+          "updatedAt": "2026-10-13T05:11:10.878Z",
+          "createdAt": "2026-10-13T05:10:12.313Z",
+          "id": "Gci7sqlKmo37FwO9",
+          "name": "pasd asd <example@example.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "customTelemetryTags": [],
+          "creatorId": "c1a453a4-6e1f-4155-afa8-201ac2899009"
+        }
+      }
+    ],
+    "versionMetadata": {
+      "name": "Version a5790e3f",
+      "description": ""
+    }
+  }
+]

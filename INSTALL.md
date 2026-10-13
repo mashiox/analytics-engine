@@ -87,9 +87,9 @@ PostgreSQL will start before the other services. It will migrate the SQL definit
 After the `sql` container finishes the first-time run procedure it will begin waiting for connections. At this point, n8n and metabase will begin migrating their schemas to the database.
 
 ```bash
-git clone https://github.com/mashiox/analytics-engine.git /opt/mashiox/analytics-engine
+git clone https://github.com/mashiox/analytics-engine.git
 
-cd /opt/mashiox/analytics-engine
+cd analytics-engine
 
 docker-compose pull
 
@@ -199,19 +199,23 @@ n8n is an enterprise-grade automation platform, capable of handling a broad rang
 
 The first step is to configure the service for use. The docker-compose file gave the n8n system the credentials needed to store system data in the `n8n` database. n8n’s web interface also requires its own database connection configuration to the `finance` database.
 
-The default docker-compose configuration provided in the minimal configuration makes [http://127.0.0.1:5678](http://127.0.0.1:5678) available to connections on the docker host.
+The default docker-compose configuration provided in the minimal configuration makes [http://127.0.0.1:5678](http://127.0.0.1:5678) available to connections on the docker host. This is the website interface that offers a visualization of the BitCoin price polling workflow.
 
-Add a new Credential to n8n for the `finance` Postgres database. And example using the default minimal configuration is given in Figure n8n00.
+The web interface provides the workflows to build these interfaces, and add authentication. But I have provided the automated tooling to get us working right away. 
 
+```bash
+docker compose exec n8n \
+	/usr/local/bin/n8n \
+	import:credentials --input=/home/node/.n8n/credentials.json
 
-![Figure n8n00](https://github.com/mashiox/analytics-engine/blob/main/n8n/n8n00.png?raw=true)
-*Figure n8n00*
+docker compose exec n8n \
+	/usr/local/bin/n8n \
+	import:workflow --input=/home/node/.n8n/workflows.json --activeState=fromJson
+```
 
-Now we can build a n8n workflow to poll [Coincap.io](https://docs.coincap.io/#f8869879-171f-4240-adfd-dd2947506adc) for their listed BTC price, and save it to the database. In n8n, click “Upload a file” under the Workflow menu. Upload the `BTC_Poll.json` file found in the `n8n` directory of the repository.
+After proceeding through n8n's Setup workflow, you will be able to view the workflow visualization in the "Workflows" section of their app.
 
-Click the “Postgres” tile on the workflow board. Change the “Credential for Postgres” option to the new Credentials to connect to the finance database.
-
-Clicking “Execute Workflow” will demonstrate a successful execution in n8n. You may check the results of the insert in the database. Name the workflow, and this enables the workflow status. This workflow marked active will poll and save the market BTC price every 5 minutes.
+Clicking “Execute Workflow” will demonstrate a successful execution in n8n. You may check the results of the insert in the database. Naming the workflow enables the workflow Publish status. the published workflow will poll and save the market BTC price every 5 minutes. You must click "Publish" in order for the polling to work.
 
 Note: This is not the only way to get data into the database. This workflow only polls the live environment for new data. More work is needed to organize and insert historic data for the equities and their value.
 
